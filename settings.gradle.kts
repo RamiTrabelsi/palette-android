@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Palette - Design System"
-include(":app")
+include(":demo")
