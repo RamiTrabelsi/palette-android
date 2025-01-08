@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Palette - Design System"
 include(":demo")
+include(":library:palette-compose")
