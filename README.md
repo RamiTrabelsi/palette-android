@@ -2,6 +2,13 @@
 
 Palette is an open-source design system for Android built with Jetpack Compose. It demonstrates a structured, atomic approach to UI design by providing a collection of design tokens, reusable components, patterns, blocks, and templates. Palette is intended as a reference implementation to help developers understand how to organize and apply design principles consistently in their projects.
 
+## Material 3 Integration
+
+Palette tokens for colors, typography, and shapes are fully mapped to Material 3 standards. For example:
+- **Colors:** Adaptive Palette colors convert to Material 3 color schemes, ensuring proper usage for primary, background, and other roles.
+- **Typography:** Predefined text styles (via PaletteTextStyle) integrate seamlessly with Material 3 typography for consistent text presentation.
+- **Shapes:** Palette shape tokens are used to generate Material 3 shapes for UI elements such as cards, buttons, and app bars.
+
 ## What's Inside
 
 ### Design Tokens (Atoms)
@@ -29,7 +36,13 @@ Palette is an open-source design system for Android built with Jetpack Compose. 
 For further insights into the design principles behind Palette, watch this talk on YouTube about:  
 [![Accent Design System Talk](https://img.youtube.com/vi/KF3murFG5-8/0.jpg)](https://www.youtube.com/watch?v=KF3murFG5-8)
 
-
 ## Getting Started
 
 Palette is provided as a reference implementation. Explore the code to see how design tokens and reusable components are combined to create consistent and maintainable UI patterns. Contributions, feedback, and suggestions are welcome.
+
+## TODO / Roadmap
+
+- [ ] Publish Palette to Maven Central
+- [ ] Develop a simple demo app that showcases different Palette items (components, patterns, blocks, templates) in various configurations
+- [ ] Set up basic CI for build verification and testing
+- [ ] Create a CONTRIBUTING guide for community contributions
