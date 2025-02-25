@@ -1,0 +1,5 @@
+<resources>
+    <string name="palette_error_screen_title">Error</string>
+    <string name="palette_error_screen_content_header">Something went wrong</string>
+    <string name="palette_error_screen_cta">Retry</string>
+</resources>
