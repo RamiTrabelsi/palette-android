@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.coil.compose)
 
     // Material 3
     implementation(libs.androidx.material3)
