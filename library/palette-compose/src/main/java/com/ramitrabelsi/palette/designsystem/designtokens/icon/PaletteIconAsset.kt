@@ -55,5 +55,11 @@ class PaletteIconAsset private constructor(
             nameForAccessibility = "Settings",
             resourceId = R.drawable.palette_ic_settings
         )
+
+        @Stable
+        val BackArrow = PaletteIconAsset(
+            nameForAccessibility = "Back Arrow",
+            resourceId = R.drawable.palette_ic_back_arrow
+        )
     }
 }
