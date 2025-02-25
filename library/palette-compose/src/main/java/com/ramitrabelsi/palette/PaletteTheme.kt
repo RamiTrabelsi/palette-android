@@ -61,7 +61,7 @@ object PaletteTheme {
 
     val colorSystem: PaletteColorSystem
         @Composable
-        get() = LocalPaletteColorSystem.current // DONE
+        get() = LocalPaletteColorSystem.current
 
     val shapeSystem: PaletteShapeSystem
         @Composable
