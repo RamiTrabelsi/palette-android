@@ -1,46 +1,58 @@
 package com.ramitrabelsi.palette
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import com.ramitrabelsi.palette.demo.PaletteShowcaseApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            PaletteTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+            val systemIsDark = isSystemInDarkTheme()
+            var isDark by rememberSaveable { mutableStateOf(systemIsDark) }
+            PaletteTheme(isDarkMode = isDark) {
+                PaletteShowcaseApp(
+                    isDarkTheme = isDark,
+                    onToggleTheme = { isDark = !isDark }
+                )
             }
         }
     }
 }
 
+@Preview(name = "Light theme", showBackground = true)
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun PaletteShowcaseLightPreview() {
+    PaletteTheme(isDarkMode = false) {
+        PaletteShowcaseApp(
+            isDarkTheme = false,
+            onToggleTheme = {}
+        )
+    }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    name = "Dark theme",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
 @Composable
-fun GreetingPreview() {
-    PaletteTheme {
-        Greeting("Android")
+fun PaletteShowcaseDarkPreview() {
+    PaletteTheme(isDarkMode = true) {
+        PaletteShowcaseApp(
+            isDarkTheme = true,
+            onToggleTheme = {}
+        )
     }
 }

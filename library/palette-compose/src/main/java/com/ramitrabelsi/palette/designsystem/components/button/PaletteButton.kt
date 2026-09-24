@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -106,10 +107,11 @@ fun PaletteButton(
         ),
         modifier = finalModifier
     ) {
+        val currentContentColor = LocalContentColor.current
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.requiredSize(PaletteDimension.IconSize.Size16.dp),
-                color = finalTextColor,
+                color = currentContentColor,
                 strokeWidth = 2.dp
             )
         } else {
@@ -121,12 +123,13 @@ fun PaletteButton(
                     // Render the icon with the restricted size.
                     PaletteIcon(
                         icon = icon,
-                        size = iconSize
+                        size = iconSize,
+                        tint = currentContentColor
                     )
                     PaletteText(
                         text = text,
                         style = textStyle,
-                        color = finalTextColor,
+                        color = currentContentColor,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -134,7 +137,7 @@ fun PaletteButton(
                 PaletteText(
                     text = text,
                     style = textStyle,
-                    color = finalTextColor,
+                    color = currentContentColor,
                     textAlign = TextAlign.Center
                 )
             }

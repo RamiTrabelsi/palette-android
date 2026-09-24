@@ -61,5 +61,17 @@ class PaletteIconAsset private constructor(
             nameForAccessibility = "Back Arrow",
             resourceId = R.drawable.palette_ic_back_arrow
         )
+
+        @Stable
+        val DarkMode = PaletteIconAsset(
+            nameForAccessibility = "Switch to dark mode",
+            resourceId = R.drawable.palette_ic_dark_mode
+        )
+
+        @Stable
+        val LightMode = PaletteIconAsset(
+            nameForAccessibility = "Switch to light mode",
+            resourceId = R.drawable.palette_ic_light_mode
+        )
     }
 }

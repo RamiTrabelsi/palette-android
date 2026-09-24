@@ -5,6 +5,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import com.ramitrabelsi.palette.designsystem.designtokens.color.PaletteColor.AccentPrimaryDark
 import com.ramitrabelsi.palette.designsystem.designtokens.color.PaletteColor.AccentPrimaryLight
 import com.ramitrabelsi.palette.designsystem.designtokens.color.PaletteColor.AccentSecondaryDark
@@ -113,17 +114,17 @@ data class PaletteColorSystem(
         if (isDark) {
             darkColorScheme(
                 primary = accentPrimary,
-                onPrimary = grayscaleG0,
+                onPrimary = accentPrimary.contrastingContentColor(),
                 primaryContainer = accentPrimary,
-                onPrimaryContainer = grayscaleG20,
+                onPrimaryContainer = accentPrimary.contrastingContentColor(),
                 secondary = accentSecondary,
-                onSecondary = grayscaleG0,
+                onSecondary = accentSecondary.contrastingContentColor(),
                 secondaryContainer = accentSecondary,
-                onSecondaryContainer = grayscaleG20,
+                onSecondaryContainer = accentSecondary.contrastingContentColor(),
                 tertiary = accentTertiary,
-                onTertiary = grayscaleG0,
+                onTertiary = accentTertiary.contrastingContentColor(),
                 tertiaryContainer = accentTertiary,
-                onTertiaryContainer = grayscaleG20,
+                onTertiaryContainer = accentTertiary.contrastingContentColor(),
                 background = grayscaleG100,
                 onBackground = grayscaleG0,
                 surface = grayscaleG80,
@@ -140,20 +141,20 @@ data class PaletteColorSystem(
         } else {
             lightColorScheme(
                 primary = accentPrimary,
-                onPrimary = grayscaleG100,
+                onPrimary = accentPrimary.contrastingContentColor(),
                 primaryContainer = accentPrimary,
-                onPrimaryContainer = grayscaleG20,
+                onPrimaryContainer = accentPrimary.contrastingContentColor(),
                 secondary = accentSecondary,
-                onSecondary = grayscaleG100,
+                onSecondary = accentSecondary.contrastingContentColor(),
                 secondaryContainer = accentSecondary,
-                onSecondaryContainer = grayscaleG20,
+                onSecondaryContainer = accentSecondary.contrastingContentColor(),
                 tertiary = accentTertiary,
-                onTertiary = grayscaleG100,
+                onTertiary = accentTertiary.contrastingContentColor(),
                 tertiaryContainer = accentTertiary,
-                onTertiaryContainer = grayscaleG20,
-                background = grayscaleG0,
+                onTertiaryContainer = accentTertiary.contrastingContentColor(),
+                background = grayscaleG20,
                 onBackground = grayscaleG100,
-                surface = grayscaleG20,
+                surface = grayscaleG0,
                 onSurface = grayscaleG100,
                 error = error,
                 onError = onError,
@@ -165,4 +166,12 @@ data class PaletteColorSystem(
                 inversePrimary = accentPrimary
             )
         }
+}
+
+/** Selects whichever neutral content color has the stronger WCAG contrast ratio. */
+private fun Color.contrastingContentColor(): Color {
+    val relativeLuminance = luminance()
+    val blackContrast = (relativeLuminance + 0.05f) / 0.05f
+    val whiteContrast = 1.05f / (relativeLuminance + 0.05f)
+    return if (blackContrast >= whiteContrast) Color.Black else Color.White
 }

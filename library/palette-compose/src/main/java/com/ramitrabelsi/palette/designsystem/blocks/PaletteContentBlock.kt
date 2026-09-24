@@ -23,21 +23,21 @@ import com.ramitrabelsi.palette.designsystem.tokens.dimensions.PaletteDimension
  *
  * @param title The header text to display (rendered by PaletteCard).
  * @param description The body text or summary to display.
+ * @param modifier Modifier for layout adjustments.
  * @param imageRes Optional drawable resource ID for the header image.
  * @param imageUrl Optional URL for the header image. If both are provided, the URL takes precedence.
  * @param onActionClick Optional callback when the action button is clicked.
  * @param actionText The label for the action button; defaults to "Read More".
- * @param modifier Modifier for layout adjustments.
  */
 @Composable
 fun PaletteContentBlock(
     title: String,
     description: String,
+    modifier: Modifier = Modifier,
     @DrawableRes imageRes: Int? = null,
     imageUrl: String? = null,
     onActionClick: (() -> Unit)? = null,
     actionText: String = "Read More",
-    modifier: Modifier = Modifier,
 ) {
     PaletteCard(
         title = title,
@@ -48,6 +48,7 @@ fun PaletteContentBlock(
                 !imageUrl.isNullOrEmpty() -> {
                     PaletteImage(
                         imageUrl = imageUrl,
+                        modifier = Modifier.height(PaletteDimension.Spacing48 * 4),
                         contentDescription = title
                     )
                 }
@@ -55,6 +56,7 @@ fun PaletteContentBlock(
                 imageRes != null -> {
                     PaletteImage(
                         imageRes = imageRes,
+                        modifier = Modifier.height(PaletteDimension.Spacing48 * 4),
                         contentDescription = title
                     )
                 }
