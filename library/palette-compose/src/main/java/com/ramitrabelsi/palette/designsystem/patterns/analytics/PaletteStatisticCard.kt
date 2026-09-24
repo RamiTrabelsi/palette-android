@@ -88,7 +88,9 @@ fun PaletteStatisticCard(
             PaletteText(
                 text = primaryValue,
                 style = PaletteTheme.typographySystem.hero,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             if (trendLabel != null) {

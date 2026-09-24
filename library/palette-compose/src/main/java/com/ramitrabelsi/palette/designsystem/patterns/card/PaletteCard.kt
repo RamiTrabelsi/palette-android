@@ -36,7 +36,7 @@ fun PaletteCard(
             .clickable(enabled = onClick != null) { onClick?.invoke() },
         shape = PaletteTheme.shapeSystem.card,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.surface
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {

@@ -1,6 +1,8 @@
 package com.ramitrabelsi.palette.demo
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,15 +16,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,9 +40,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.coerceAtLeast
 import com.ramitrabelsi.palette.PaletteTheme
+import com.ramitrabelsi.palette.R
 import com.ramitrabelsi.palette.designsystem.blocks.PaletteContentBlock
 import com.ramitrabelsi.palette.designsystem.components.badge.PaletteBadge
 import com.ramitrabelsi.palette.designsystem.components.badge.PaletteBadgeType
@@ -53,6 +64,7 @@ import com.ramitrabelsi.palette.designsystem.patterns.card.PaletteCard
 import com.ramitrabelsi.palette.designsystem.patterns.topappbar.PaletteTopAppBar
 import com.ramitrabelsi.palette.designsystem.patterns.templates.PaletteErrorScreenTemplate
 import com.ramitrabelsi.palette.designsystem.tokens.dimensions.PaletteDimension
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 /**
@@ -65,8 +77,36 @@ fun PaletteShowcaseApp(
     modifier: Modifier = Modifier
 ) {
     var selectedSection by rememberSaveable { mutableStateOf(PaletteDemoSection.Tokens) }
+    var isShowingErrorTemplate by rememberSaveable { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val saveableStateHolder = rememberSaveableStateHolder()
+    val showMessage: (String) -> Unit = { message ->
+        coroutineScope.launch {
+            snackbarHostState.currentSnackbarData?.dismiss()
+            snackbarHostState.showSnackbar(message = message, withDismissAction = true)
+        }
+    }
+
+    if (isShowingErrorTemplate) {
+        BackHandler { isShowingErrorTemplate = false }
+        Surface(modifier = modifier.fillMaxSize()) {
+            PaletteErrorScreenTemplate(
+                errorMessage = "We couldn't load your projects. Check your connection and try again.",
+                onRetry = {
+                    isShowingErrorTemplate = false
+                    showMessage("Retry requested")
+                },
+                errorImageUrl = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=60",
+                onNavigationClick = { isShowingErrorTemplate = false }
+            )
+        }
+        return
+    }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             PaletteTopAppBar(
                 title = "Palette Showcase",
@@ -77,7 +117,11 @@ fun PaletteShowcaseApp(
                     )
                     PaletteIconButton(
                         onClick = onToggleTheme,
-                        icon = PaletteIconAsset.Settings
+                        icon = if (isDarkTheme) {
+                            PaletteIconAsset.LightMode
+                        } else {
+                            PaletteIconAsset.DarkMode
+                        }
                     )
                 }
             )
@@ -86,11 +130,12 @@ fun PaletteShowcaseApp(
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)) {
-            TabRow(
+            ScrollableTabRow(
                 selectedTabIndex = selectedSection.ordinal,
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = MaterialTheme.colorScheme.surface,
+                edgePadding = PaletteDimension.Spacing8
             ) {
-                PaletteDemoSection.values().forEach { section ->
+                PaletteDemoSection.entries.forEach { section ->
                     Tab(
                         selected = selectedSection == section,
                         onClick = { selectedSection = section },
@@ -109,11 +154,16 @@ fun PaletteShowcaseApp(
                 }
             }
 
-            when (selectedSection) {
-                PaletteDemoSection.Tokens -> TokensShowcase()
-                PaletteDemoSection.Components -> ComponentsShowcase()
-                PaletteDemoSection.Patterns -> PatternsShowcase()
-                PaletteDemoSection.Community -> CommunityShowcase()
+            saveableStateHolder.SaveableStateProvider(selectedSection.name) {
+                when (selectedSection) {
+                    PaletteDemoSection.Tokens -> TokensShowcase()
+                    PaletteDemoSection.Components -> ComponentsShowcase(showMessage)
+                    PaletteDemoSection.Patterns -> PatternsShowcase(
+                        onAction = showMessage,
+                        onShowErrorTemplate = { isShowingErrorTemplate = true }
+                    )
+                    PaletteDemoSection.Community -> CommunityShowcase(showMessage)
+                }
             }
         }
     }
@@ -129,37 +179,38 @@ enum class PaletteDemoSection(val title: String) {
 @Composable
 private fun TokensShowcase() {
     val colorSystem = PaletteTheme.colorSystem
+    val materialColors = MaterialTheme.colorScheme
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(PaletteDimension.Spacing16),
         verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing16)
     ) {
         item {
-            PaletteCard(title = "Brand & Accent Colors") {
+            PaletteCard(title = "Brand & Accent Colors", content = {
                 ColorTokenGrid(
                     colors = listOf(
                         TokenColor(
                             "Accent Primary",
                             colorSystem.accentPrimary,
-                            onColor = if (colorSystem.isDark) colorSystem.grayscaleG0 else colorSystem.grayscaleG100
+                            onColor = materialColors.onPrimary
                         ),
                         TokenColor(
                             "Accent Secondary",
                             colorSystem.accentSecondary,
-                            onColor = if (colorSystem.isDark) colorSystem.grayscaleG0 else colorSystem.grayscaleG100
+                            onColor = materialColors.onSecondary
                         ),
                         TokenColor(
                             "Accent Tertiary",
                             colorSystem.accentTertiary,
-                            onColor = if (colorSystem.isDark) colorSystem.grayscaleG0 else colorSystem.grayscaleG100
+                            onColor = materialColors.onTertiary
                         ),
                     )
                 )
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Semantic Colors") {
+            PaletteCard(title = "Semantic Colors", content = {
                 ColorTokenGrid(
                     colors = listOf(
                         TokenColor("Error", colorSystem.error, onColor = colorSystem.onError),
@@ -172,11 +223,11 @@ private fun TokensShowcase() {
                         TokenColor("Info Container", colorSystem.infoContainer, onColor = colorSystem.onInfoContainer),
                     )
                 )
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Grayscale Tokens") {
+            PaletteCard(title = "Grayscale Tokens", content = {
                 ColorTokenGrid(
                     colors = listOf(
                         TokenColor("G0", colorSystem.grayscaleG0, onColor = colorSystem.grayscaleG100),
@@ -187,17 +238,17 @@ private fun TokensShowcase() {
                         TokenColor("G100", colorSystem.grayscaleG100, onColor = colorSystem.grayscaleG0),
                     )
                 )
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Typography System") {
+            PaletteCard(title = "Typography System", content = {
                 TypographyTokenList()
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Spacing Tokens") {
+            PaletteCard(title = "Spacing Tokens", content = {
                 DimensionTokenColumn(
                     tokens = listOf(
                         "Spacing 0" to PaletteDimension.Spacing0,
@@ -210,64 +261,64 @@ private fun TokensShowcase() {
                         "Spacing 48" to PaletteDimension.Spacing48,
                     )
                 )
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Icon Sizes & Corner Radii") {
+            PaletteCard(title = "Icon Sizes & Corner Radii", content = {
                 IconSizeShowcase()
                 Spacer(modifier = Modifier.height(PaletteDimension.Spacing16))
                 CornerRadiusShowcase()
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Shape System") {
+            PaletteCard(title = "Shape System", content = {
                 ShapeShowcase()
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Icon Library") {
+            PaletteCard(title = "Icon Library", content = {
                 IconLibrary()
-            }
+            })
         }
     }
 }
 
 @Composable
-private fun ComponentsShowcase() {
+private fun ComponentsShowcase(onAction: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(PaletteDimension.Spacing16),
         verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing16)
     ) {
         item {
-            PaletteCard(title = "Buttons") {
+            PaletteCard(title = "Buttons", content = {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing12)
                 ) {
                     PaletteButton(
-                        onClick = {},
+                        onClick = { onAction("Primary action selected") },
                         text = "Primary CTA",
                         type = PaletteButtonType.Primary,
                         isFillContainer = true
                     )
                     PaletteButton(
-                        onClick = {},
+                        onClick = { onAction("Favorite action selected") },
                         text = "Secondary CTA",
                         type = PaletteButtonType.Secondary,
                         icon = PaletteIconAsset.Favorite,
                         isFillContainer = true
                     )
                     PaletteButton(
-                        onClick = {},
+                        onClick = { onAction("Ghost action selected") },
                         text = "Ghost Action",
                         type = PaletteButtonType.Ghost,
                         size = PaletteButtonSize.Medium
                     )
                     PaletteButton(
-                        onClick = {},
+                        onClick = { onAction("Destructive action selected") },
                         text = "Delete",
                         type = PaletteButtonType.Destructive,
                         size = PaletteButtonSize.Small
@@ -278,18 +329,27 @@ private fun ComponentsShowcase() {
                         isLoading = true,
                         isFillContainer = true
                     )
+                    PaletteButton(
+                        onClick = {},
+                        text = "Disabled",
+                        isEnabled = false,
+                        isFillContainer = true
+                    )
                 }
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Iconography") {
+            PaletteCard(title = "Iconography", content = {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing12),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    PaletteIconButton(onClick = {}, icon = PaletteIconAsset.Home)
-                    PaletteIconButton(onClick = {}, icon = PaletteIconAsset.Search,
+                    PaletteIconButton(
+                        onClick = { onAction("Home icon selected") },
+                        icon = PaletteIconAsset.Home
+                    )
+                    PaletteIconButton(onClick = { onAction("Search icon selected") }, icon = PaletteIconAsset.Search,
                         iconSize = PaletteDimension.IconSize.Size24)
                     PaletteIcon(
                         icon = PaletteIconAsset.Favorite,
@@ -297,11 +357,11 @@ private fun ComponentsShowcase() {
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Text Components") {
+            PaletteCard(title = "Text Components", content = {
                 Column(verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing8)) {
                     PaletteText(
                         text = "PaletteText keeps typography in sync with the design tokens.",
@@ -313,53 +373,58 @@ private fun ComponentsShowcase() {
                         color = MaterialTheme.colorScheme.primary
                     )
                     PaletteUrlText(
-                        url = "https://github.com/ramitrabelsi/palette", 
+                        url = "https://github.com/ramitrabelsi/palette",
                         displayText = "Open Palette on GitHub"
                     )
                 }
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Media") {
+            PaletteCard(title = "Media", content = {
                 Column(verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing12)) {
                     PaletteImage(
-                        imageRes = com.ramitrabelsi.palette.demo.R.drawable.ic_launcher_foreground,
+                        imageRes = R.drawable.ic_launcher_foreground,
+                        modifier = Modifier.height(160.dp),
                         contentDescription = "Palette mascot"
                     )
                     PaletteImage(
                         imageUrl = "https://images.unsplash.com/photo-1526481280695-3c4691d133d8?auto=format&fit=crop&w=800&q=60",
+                        modifier = Modifier.height(180.dp),
                         contentDescription = "Remote inspiration",
                         borderWidth = 2.dp,
                         borderColor = MaterialTheme.colorScheme.primary
                     )
                 }
-            }
+            })
         }
     }
 }
 
 @Composable
-private fun PatternsShowcase() {
+private fun PatternsShowcase(
+    onAction: (String) -> Unit,
+    onShowErrorTemplate: () -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(PaletteDimension.Spacing16),
         verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing16)
     ) {
         item {
-            PaletteCard(title = "Content Block") {
+            PaletteCard(title = "Content Block", content = {
                 PaletteContentBlock(
                     title = "Composable content",
                     description = "Blocks are perfect for editorial or marketing layouts. Use them to stitch imagery, typography and CTAs together.",
                     imageUrl = "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=60",
-                    onActionClick = {},
+                    onActionClick = { onAction("Content block action selected") },
                     actionText = "Read story"
                 )
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Elevated Card") {
+            PaletteCard(title = "Elevated Card", content = {
                 PaletteCard(
                     title = "PaletteCard inside a PaletteCard",
                     content = {
@@ -367,49 +432,56 @@ private fun PatternsShowcase() {
                             text = "Patterns can be composed together to create sophisticated layouts.",
                             style = PaletteTheme.typographySystem.bodyMedium
                         )
-                    }
+                    },
+                    onClick = { onAction("Nested card selected") }
                 )
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Error Template") {
-                PaletteErrorScreenTemplate(
-                    errorMessage = "We couldn't load your projects. Check your connection and try again.",
-                    onRetry = {},
-                    errorImageUrl = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=60",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(320.dp)
-                )
-            }
+            PaletteCard(title = "Error Template", content = {
+                Column(verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing12)) {
+                    PaletteText(
+                        text = "Open the complete template to test its navigation and retry actions.",
+                        style = PaletteTheme.typographySystem.bodyMedium
+                    )
+                    PaletteButton(
+                        onClick = onShowErrorTemplate,
+                        text = "Open error screen",
+                        isFillContainer = true
+                    )
+                }
+            })
         }
     }
 }
 
 @Composable
-private fun CommunityShowcase() {
+private fun CommunityShowcase(onAction: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(PaletteDimension.Spacing16),
         verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing16)
     ) {
         item {
-            PaletteCard(title = "Badges") {
+            PaletteCard(title = "Badges", content = {
                 Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
                     horizontalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing8),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     PaletteBadge(text = "Featured", type = PaletteBadgeType.Primary)
                     PaletteBadge(text = "Trending", type = PaletteBadgeType.Success)
                     PaletteBadge(text = "Beta", type = PaletteBadgeType.Info)
+                    PaletteBadge(text = "Warning", type = PaletteBadgeType.Warning)
                     PaletteBadge(text = "Deprecated", type = PaletteBadgeType.Danger)
+                    PaletteBadge(text = "Neutral", type = PaletteBadgeType.Neutral)
                 }
-            }
+            })
         }
 
         item {
-            PaletteCard(title = "Analytics Tile") {
+            PaletteCard(title = "Analytics Tile", content = {
                 Column(verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing16)) {
                     PaletteStatisticCard(
                         title = "Weekly signups",
@@ -417,7 +489,8 @@ private fun CommunityShowcase() {
                         supportingText = "A healthy mix of organic and referral traffic.",
                         trendLabel = "▲ 12.4% vs last week",
                         trendType = PaletteStatisticTrend.Positive,
-                        icon = PaletteIconAsset.Search
+                        icon = PaletteIconAsset.Search,
+                        onClick = { onAction("Weekly signups selected") }
                     )
                     PaletteStatisticCard(
                         title = "Churn rate",
@@ -425,7 +498,8 @@ private fun CommunityShowcase() {
                         supportingText = "Stay below 4% to keep momentum.",
                         trendLabel = "▼ 0.6% vs last month (good)",
                         trendType = PaletteStatisticTrend.Positive,
-                        icon = PaletteIconAsset.Favorite
+                        icon = PaletteIconAsset.Favorite,
+                        onClick = { onAction("Churn rate selected") }
                     )
                     PaletteStatisticCard(
                         title = "Downtime incidents",
@@ -433,10 +507,11 @@ private fun CommunityShowcase() {
                         supportingText = "Track operational debt across squads.",
                         trendLabel = "▲ 2 vs target",
                         trendType = PaletteStatisticTrend.Negative,
-                        icon = PaletteIconAsset.Settings
+                        icon = PaletteIconAsset.Settings,
+                        onClick = { onAction("Downtime incidents selected") }
                     )
                 }
-            }
+            })
         }
     }
 }
@@ -450,7 +525,7 @@ data class TokenColor(
 @Composable
 private fun ColorTokenGrid(colors: List<TokenColor>) {
     Column(verticalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing12)) {
-        colors.chunked(3).forEach { rowColors ->
+        colors.chunked(2).forEach { rowColors ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing12),
                 modifier = Modifier.fillMaxWidth()
@@ -458,7 +533,7 @@ private fun ColorTokenGrid(colors: List<TokenColor>) {
                 rowColors.forEach { token ->
                     ColorTokenItem(token, modifier = Modifier.weight(1f))
                 }
-                repeat(3 - rowColors.size) {
+                repeat(2 - rowColors.size) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
@@ -570,6 +645,7 @@ private fun DimensionTokenColumn(tokens: List<Pair<String, Dp>>) {
 @Composable
 private fun IconSizeShowcase() {
     Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing16),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -594,6 +670,7 @@ private fun IconSizeShowcase() {
 @Composable
 private fun CornerRadiusShowcase() {
     Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing12),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -654,11 +731,15 @@ private fun IconLibrary() {
         PaletteIconAsset.Favorite,
         PaletteIconAsset.Search,
         PaletteIconAsset.Settings,
-        PaletteIconAsset.BackArrow
+        PaletteIconAsset.BackArrow,
+        PaletteIconAsset.DarkMode,
+        PaletteIconAsset.LightMode,
     )
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(PaletteDimension.Spacing24)
     ) {
         icons.forEach { icon ->

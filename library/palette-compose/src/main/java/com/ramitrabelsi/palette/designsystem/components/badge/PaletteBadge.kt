@@ -10,8 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.dp
+import androidx.compose.material3.MaterialTheme
 import com.ramitrabelsi.palette.PaletteTheme
 import com.ramitrabelsi.palette.designsystem.components.icon.PaletteIcon
 import com.ramitrabelsi.palette.designsystem.designtokens.icon.PaletteIconAsset
@@ -38,19 +38,14 @@ fun PaletteBadge(
     textStyle: PaletteTextStyle = PaletteTheme.typographySystem.labelMedium,
 ) {
     val colorSystem = PaletteTheme.colorSystem
-    val materialColors = colorSystem.toMaterialColors()
+    val materialColors = MaterialTheme.colorScheme
     val (containerColor, contentColor) = when (type) {
         PaletteBadgeType.Primary -> materialColors.primaryContainer to materialColors.onPrimaryContainer
         PaletteBadgeType.Success -> colorSystem.successContainer to colorSystem.onSuccessContainer
         PaletteBadgeType.Warning -> colorSystem.warningContainer to colorSystem.onWarningContainer
         PaletteBadgeType.Danger -> materialColors.errorContainer to materialColors.onErrorContainer
         PaletteBadgeType.Info -> colorSystem.infoContainer to colorSystem.onInfoContainer
-        PaletteBadgeType.Neutral -> {
-            val base = colorSystem.grayscaleG20
-            // Add a subtle overlay to ensure contrast on both dark/light modes.
-            val overlay = colorSystem.accentPrimary.copy(alpha = PaletteDimension.AlphaVeryLight)
-            (overlay.compositeOver(base)) to colorSystem.grayscaleG100
-        }
+        PaletteBadgeType.Neutral -> materialColors.surfaceVariant to materialColors.onSurfaceVariant
     }
 
     Row(

@@ -23,10 +23,12 @@ Palette tokens for colors, typography, and shapes are fully mapped to Material 3
 - **PaletteButton:** A customizable button that applies design tokens for color, spacing, and shape.
 - **PaletteImage:** An image component that supports both drawable resources and URL loading (via Coil), with optional outline support.
 - **PaletteIcon & PaletteIconButton:** Components for rendering icons with type-safe sizing and proper click behavior.
+- **PaletteBadge:** A compact status component with semantic variants and optional icons.
 
 ### Patterns (Organisms)
 - **PaletteTopAppBar:** A top app bar pattern that integrates a title and navigation actions.
 - **PaletteContentBlock:** A composite block that displays an image, title, description, and an optional action button.
+- **PaletteStatisticCard:** A dashboard pattern for presenting metrics, supporting copy, and trends.
 
 ### Templates (Pages)
 - **PaletteErrorScreenTemplate:** A full-page error screen template that assembles the top app bar and content block into a cohesive layout with a retry action.
@@ -43,6 +45,6 @@ Palette is provided as a reference implementation. Explore the code to see how d
 ## TODO / Roadmap
 
 - [ ] Publish Palette to Maven Central
-- [ ] Develop a simple demo app that showcases different Palette items (components, patterns, blocks, templates) in various configurations
+- [x] Develop a demo app that showcases Palette tokens, components, patterns, blocks, and templates in light and dark themes
 - [ ] Set up basic CI for build verification and testing
 - [ ] Create a CONTRIBUTING guide for community contributions
