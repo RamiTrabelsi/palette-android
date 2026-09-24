@@ -62,17 +62,13 @@ fun PaletteStatisticCard(
                 Column(modifier = Modifier.weight(1f)) {
                     PaletteText(
                         text = title,
-                        style = PaletteTheme.typographySystem.subtitle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        style = PaletteTheme.typographySystem.subtitle
                     )
                     supportingText?.let {
                         PaletteText(
                             text = it,
                             style = PaletteTheme.typographySystem.bodySmall,
-                            color = contentColor.copy(alpha = 0.8f),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            color = contentColor.copy(alpha = 0.8f)
                         )
                     }
                 }
@@ -80,7 +76,8 @@ fun PaletteStatisticCard(
                     PaletteIcon(
                         icon = icon,
                         size = PaletteDimension.IconSize.Size32,
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null
                     )
                 }
             }
@@ -89,7 +86,7 @@ fun PaletteStatisticCard(
                 text = primaryValue,
                 style = PaletteTheme.typographySystem.hero,
                 color = MaterialTheme.colorScheme.primary,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
 

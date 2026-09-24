@@ -1,4 +1,12 @@
 <resources>
+    <string name="palette_a11y_loading">Loading</string>
+    <string name="palette_a11y_icon_home">Home</string>
+    <string name="palette_a11y_icon_favorite">Favorite</string>
+    <string name="palette_a11y_icon_search">Search</string>
+    <string name="palette_a11y_icon_settings">Settings</string>
+    <string name="palette_a11y_icon_back">Go back</string>
+    <string name="palette_a11y_icon_dark_mode">Switch to dark mode</string>
+    <string name="palette_a11y_icon_light_mode">Switch to light mode</string>
     <string name="palette_error_screen_title">Error</string>
     <string name="palette_error_screen_content_header">Something went wrong</string>
     <string name="palette_error_screen_cta">Retry</string>

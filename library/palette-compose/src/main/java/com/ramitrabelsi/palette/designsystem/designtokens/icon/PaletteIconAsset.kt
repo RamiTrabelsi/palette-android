@@ -1,6 +1,7 @@
 package com.ramitrabelsi.palette.designsystem.designtokens.icon
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.ramitrabelsi.palette_compose.R
@@ -16,12 +17,12 @@ import com.ramitrabelsi.palette_compose.R
  * parameter), dedicated dark/light assets provide more precise control over details (gradients,
  * shadows, outlines) and ensure optimized appearance across themes.
  *
- * @property nameForAccessibility Text used by accessibility services to describe the icon.
+ * @property accessibilityLabelRes Localized default label used by actionable icon components.
  * @property resourceId Drawable resource id for the icon image.
  */
 @Immutable
 class PaletteIconAsset private constructor(
-    val nameForAccessibility: String,
+    @StringRes val accessibilityLabelRes: Int,
     @DrawableRes internal val resourceId: Int,
 ) {
 
@@ -34,43 +35,43 @@ class PaletteIconAsset private constructor(
 
         @Stable
         val Home = PaletteIconAsset(
-            nameForAccessibility = "Home",
+            accessibilityLabelRes = R.string.palette_a11y_icon_home,
             resourceId = R.drawable.palette_ic_home
         )
 
         @Stable
         val Favorite = PaletteIconAsset(
-            nameForAccessibility = "Favorite",
+            accessibilityLabelRes = R.string.palette_a11y_icon_favorite,
             resourceId = R.drawable.palette_ic_favorites
         )
 
         @Stable
         val Search = PaletteIconAsset(
-            nameForAccessibility = "Search",
+            accessibilityLabelRes = R.string.palette_a11y_icon_search,
             resourceId = R.drawable.palette_ic_search
         )
 
         @Stable
         val Settings = PaletteIconAsset(
-            nameForAccessibility = "Settings",
+            accessibilityLabelRes = R.string.palette_a11y_icon_settings,
             resourceId = R.drawable.palette_ic_settings
         )
 
         @Stable
         val BackArrow = PaletteIconAsset(
-            nameForAccessibility = "Back Arrow",
+            accessibilityLabelRes = R.string.palette_a11y_icon_back,
             resourceId = R.drawable.palette_ic_back_arrow
         )
 
         @Stable
         val DarkMode = PaletteIconAsset(
-            nameForAccessibility = "Switch to dark mode",
+            accessibilityLabelRes = R.string.palette_a11y_icon_dark_mode,
             resourceId = R.drawable.palette_ic_dark_mode
         )
 
         @Stable
         val LightMode = PaletteIconAsset(
-            nameForAccessibility = "Switch to light mode",
+            accessibilityLabelRes = R.string.palette_a11y_icon_light_mode,
             resourceId = R.drawable.palette_ic_light_mode
         )
     }

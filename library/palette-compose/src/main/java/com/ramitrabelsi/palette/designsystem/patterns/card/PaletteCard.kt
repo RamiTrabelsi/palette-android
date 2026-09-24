@@ -9,6 +9,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.ramitrabelsi.palette.PaletteTheme
 import com.ramitrabelsi.palette.designsystem.components.text.PaletteText
@@ -30,10 +32,16 @@ fun PaletteCard(
     content: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
 ) {
+    val cardModifier = modifier.fillMaxWidth().let { layoutModifier ->
+        if (onClick != null) {
+            layoutModifier.clickable(onClick = onClick)
+        } else {
+            layoutModifier
+        }
+    }
+
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(enabled = onClick != null) { onClick?.invoke() },
+        modifier = cardModifier,
         shape = PaletteTheme.shapeSystem.card,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
@@ -45,7 +53,8 @@ fun PaletteCard(
         ) {
             PaletteText(
                 text = title,
-                style = PaletteTheme.typographySystem.titleMedium
+                style = PaletteTheme.typographySystem.titleMedium,
+                modifier = Modifier.semantics { heading() }
             )
             content?.invoke()
         }

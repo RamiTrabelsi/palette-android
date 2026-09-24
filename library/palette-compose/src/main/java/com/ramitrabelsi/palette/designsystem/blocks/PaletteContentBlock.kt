@@ -26,6 +26,8 @@ import com.ramitrabelsi.palette.designsystem.tokens.dimensions.PaletteDimension
  * @param modifier Modifier for layout adjustments.
  * @param imageRes Optional drawable resource ID for the header image.
  * @param imageUrl Optional URL for the header image. If both are provided, the URL takes precedence.
+ * @param imageContentDescription Description for an informative image. Leave `null` when the image
+ * is decorative or repeats nearby text.
  * @param onActionClick Optional callback when the action button is clicked.
  * @param actionText The label for the action button; defaults to "Read More".
  */
@@ -36,6 +38,7 @@ fun PaletteContentBlock(
     modifier: Modifier = Modifier,
     @DrawableRes imageRes: Int? = null,
     imageUrl: String? = null,
+    imageContentDescription: String? = null,
     onActionClick: (() -> Unit)? = null,
     actionText: String = "Read More",
 ) {
@@ -49,7 +52,7 @@ fun PaletteContentBlock(
                     PaletteImage(
                         imageUrl = imageUrl,
                         modifier = Modifier.height(PaletteDimension.Spacing48 * 4),
-                        contentDescription = title
+                        contentDescription = imageContentDescription
                     )
                 }
 
@@ -57,7 +60,7 @@ fun PaletteContentBlock(
                     PaletteImage(
                         imageRes = imageRes,
                         modifier = Modifier.height(PaletteDimension.Spacing48 * 4),
-                        contentDescription = title
+                        contentDescription = imageContentDescription
                     )
                 }
             }

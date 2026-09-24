@@ -35,6 +35,8 @@ Palette tokens for colors, typography, and shapes are fully mapped to Material 3
 
 ## Additional Resources
 
+- [Accessibility contract and testing guide](ACCESSIBILITY.md)
+
 For further insights into the design principles behind Palette, watch this talk on YouTube about:  
 [![Accent Design System Talk](https://img.youtube.com/vi/KF3murFG5-8/0.jpg)](https://www.youtube.com/watch?v=KF3murFG5-8)
 
@@ -47,4 +49,5 @@ Palette is provided as a reference implementation. Explore the code to see how d
 - [ ] Publish Palette to Maven Central
 - [x] Develop a demo app that showcases Palette tokens, components, patterns, blocks, and templates in light and dark themes
 - [ ] Set up basic CI for build verification and testing
+- [ ] Run assistive-technology checks with disabled users on complete product journeys
 - [ ] Create a CONTRIBUTING guide for community contributions

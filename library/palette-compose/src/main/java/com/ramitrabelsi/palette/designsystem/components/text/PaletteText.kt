@@ -25,7 +25,8 @@ import com.ramitrabelsi.palette.designsystem.designtokens.typography.PaletteText
  * @param textAlign Optional text alignment.
  * @param maxLines Maximum number of lines to display.
  * @param overflow How to handle text overflow.
- * @param contentDescription Optional content description for accessibility.
+ * @param contentDescription Optional spoken-label override. Visible text is already exposed by
+ * Compose, so only use this when the visual text cannot be pronounced correctly.
  */
 @Composable
 fun PaletteText(
@@ -63,7 +64,8 @@ fun PaletteText(
  * @param textAlign Optional text alignment.
  * @param maxLines Maximum number of lines to display.
  * @param overflow How to handle text overflow.
- * @param contentDescription Optional content description for accessibility.
+ * @param contentDescription Optional spoken-label override. Visible text is already exposed by
+ * Compose, so only use this when the visual text cannot be pronounced correctly.
  */
 @Composable
 fun PaletteText(

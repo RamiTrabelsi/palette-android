@@ -9,6 +9,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import com.ramitrabelsi.palette.PaletteTheme
 import com.ramitrabelsi.palette.PaletteTheme.colorSystem
 import com.ramitrabelsi.palette.designsystem.components.icon.PaletteIconButton
@@ -37,7 +39,8 @@ fun PaletteTopAppBar(
         title = {
             PaletteText(
                 text = title,
-                style = PaletteTheme.typographySystem.titleMedium
+                style = PaletteTheme.typographySystem.titleMedium,
+                modifier = Modifier.semantics { heading() }
             )
         },
         navigationIcon = {

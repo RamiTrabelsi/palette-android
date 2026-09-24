@@ -5,6 +5,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import com.ramitrabelsi.palette.designsystem.designtokens.icon.PaletteIconAsset
 import com.ramitrabelsi.palette.designsystem.tokens.dimensions.PaletteDimension
 
@@ -20,6 +21,9 @@ import com.ramitrabelsi.palette.designsystem.tokens.dimensions.PaletteDimension
  * @param iconSize The size at which to render the icon (restricted to PaletteDimension.IconSize values).
  *                 Defaults to [PaletteDimension.IconSize.Size16].
  * @param tint Optional tint color; defaults to [LocalContentColor.current].
+ * @param accessibilityLabel Optional contextual label. When omitted, Palette uses the icon's
+ * localized default label.
+ * @param isEnabled Whether the button accepts user interaction.
  */
 @Composable
 fun PaletteIconButton(
@@ -28,15 +32,22 @@ fun PaletteIconButton(
     modifier: Modifier = Modifier,
     iconSize: PaletteDimension.IconSize = PaletteDimension.IconSize.Size16,
     tint: Color = LocalContentColor.current,
+    accessibilityLabel: String? = null,
+    isEnabled: Boolean = true,
 ) {
+    val resolvedAccessibilityLabel = accessibilityLabel
+        ?: stringResource(icon.accessibilityLabelRes)
+
     IconButton(
         onClick = onClick,
+        enabled = isEnabled,
         modifier = modifier
     ) {
         PaletteIcon(
             icon = icon,
             size = iconSize,
-            tint = tint
+            tint = tint,
+            contentDescription = resolvedAccessibilityLabel
         )
     }
 }

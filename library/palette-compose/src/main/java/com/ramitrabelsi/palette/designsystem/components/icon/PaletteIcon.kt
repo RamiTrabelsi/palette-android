@@ -16,12 +16,13 @@ import com.ramitrabelsi.palette.designsystem.tokens.dimensions.PaletteDimension
  * This composable ensures that only the approved icon assets (managed via PaletteIconAsset)
  * are used across the app, and it applies an optional size and tint.
  *
- * @param icon The icon asset to display. This includes the drawable resource and accessibility
- *             description.
+ * @param icon The icon asset to display.
  * @param modifier Modifier for layout adjustments.
  * @param size Optional size (restricted to values defined in [PaletteDimension.IconSize]).
  *             If provided, the icon will be resized accordingly.
  * @param tint Optional tint color; if not specified, it defaults to [LocalContentColor.current].
+ * @param contentDescription Description for an informative standalone icon. Keep `null` for
+ * decorative icons or icons whose parent already exposes an accessible label.
  */
 @Composable
 fun PaletteIcon(
@@ -29,11 +30,12 @@ fun PaletteIcon(
     modifier: Modifier = Modifier,
     size: PaletteDimension.IconSize? = null,
     tint: Color = LocalContentColor.current,
+    contentDescription: String? = null,
 ) {
     val finalModifier = size?.let { modifier.requiredSize(it.dp) } ?: modifier
     Icon(
         painter = painterResource(id = icon.resourceId),
-        contentDescription = icon.nameForAccessibility,
+        contentDescription = contentDescription,
         tint = tint,
         modifier = finalModifier
     )
