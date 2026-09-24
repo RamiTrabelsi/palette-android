@@ -1,0 +1,13 @@
+<resources>
+    <string name="palette_a11y_loading">Chargement</string>
+    <string name="palette_a11y_icon_home">Accueil</string>
+    <string name="palette_a11y_icon_favorite">Favori</string>
+    <string name="palette_a11y_icon_search">Rechercher</string>
+    <string name="palette_a11y_icon_settings">Paramètres</string>
+    <string name="palette_a11y_icon_back">Revenir en arrière</string>
+    <string name="palette_a11y_icon_dark_mode">Passer au thème sombre</string>
+    <string name="palette_a11y_icon_light_mode">Passer au thème clair</string>
+    <string name="palette_error_screen_title">Erreur</string>
+    <string name="palette_error_screen_content_header">Une erreur est survenue</string>
+    <string name="palette_error_screen_cta">Réessayer</string>
+</resources>

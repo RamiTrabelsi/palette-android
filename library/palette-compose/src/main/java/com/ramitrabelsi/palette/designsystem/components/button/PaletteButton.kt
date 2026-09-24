@@ -16,6 +16,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ramitrabelsi.palette.PaletteTheme
@@ -24,6 +28,7 @@ import com.ramitrabelsi.palette.designsystem.components.text.PaletteText
 import com.ramitrabelsi.palette.designsystem.designtokens.icon.PaletteIconAsset
 import com.ramitrabelsi.palette.designsystem.designtokens.typography.PaletteTextStyle
 import com.ramitrabelsi.palette.designsystem.tokens.dimensions.PaletteDimension
+import com.ramitrabelsi.palette_compose.R
 
 /**
  * PaletteButton is a customizable, theme-aware button component following the Palette Design System.
@@ -64,7 +69,14 @@ fun PaletteButton(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     // Apply fillMaxWidth if requested.
-    val finalModifier = if (isFillContainer) modifier.fillMaxWidth() else modifier
+    val layoutModifier = if (isFillContainer) modifier.fillMaxWidth() else modifier
+    val loadingStateDescription = stringResource(R.string.palette_a11y_loading)
+    val finalModifier = layoutModifier.semantics {
+        if (isLoading) {
+            contentDescription = text
+            stateDescription = loadingStateDescription
+        }
+    }
 
     // Determine default colors based on the button type.
     val finalBackgroundColor = backgroundColor ?: when (type) {
@@ -124,7 +136,8 @@ fun PaletteButton(
                     PaletteIcon(
                         icon = icon,
                         size = iconSize,
-                        tint = currentContentColor
+                        tint = currentContentColor,
+                        contentDescription = null
                     )
                     PaletteText(
                         text = text,

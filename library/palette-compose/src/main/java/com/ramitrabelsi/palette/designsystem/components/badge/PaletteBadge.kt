@@ -64,7 +64,8 @@ fun PaletteBadge(
             PaletteIcon(
                 icon = icon,
                 size = PaletteDimension.IconSize.Size16,
-                tint = iconTint ?: contentColor
+                tint = iconTint ?: contentColor,
+                contentDescription = null
             )
         }
         PaletteText(

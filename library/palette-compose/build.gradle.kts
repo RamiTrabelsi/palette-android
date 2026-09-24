@@ -45,4 +45,7 @@ dependencies {
 
     // Material 3
     implementation(libs.androidx.material3)
+
+    testImplementation(libs.junit)
+
 }

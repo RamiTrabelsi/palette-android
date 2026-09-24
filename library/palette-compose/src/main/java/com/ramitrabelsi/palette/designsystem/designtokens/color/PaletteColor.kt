@@ -40,12 +40,12 @@ internal object PaletteColor {
     val OnErrorContainerLight = Color(0xFF000000) // Black
 
     val SuccessLight = Color(0xFF388E3C)            // Green
-    val OnSuccessLight = Color(0xFFFFFFFF)          // White
+    val OnSuccessLight = Color(0xFF000000)          // Black (5.10:1)
     val SuccessContainerLight = Color(0xFF81C784)   // Green (success)
     val OnSuccessContainerLight = Color(0xFF000000) // Black
 
     val WarningLight = Color(0xFFF57C00)             // Orange
-    val OnWarningLight = Color(0xFFFFFFFF)           // White
+    val OnWarningLight = Color(0xFF000000)           // Black (7.77:1)
     val WarningContainerLight = Color(0xFFFFCC80)    // Light orange
     val OnWarningContainerLight = Color(0xFF000000)  // Black
 
@@ -63,12 +63,12 @@ internal object PaletteColor {
     val SuccessDark = Color(0xFF81C784)            // Green (success)
     val OnSuccessDark = Color(0xFF000000)          // Black
     val SuccessContainerDark = Color(0xFF388E3C)   // Green
-    val OnSuccessContainerDark = Color(0xFFFFFFFF) // White
+    val OnSuccessContainerDark = Color(0xFF000000) // Black (5.10:1)
 
     val WarningDark = Color(0xFFFFCC80)            // Light orange
     val OnWarningDark = Color(0xFF000000)          // Black
     val WarningContainerDark = Color(0xFFF57C00)   // Orange
-    val OnWarningContainerDark = Color(0xFFFFFFFF) // White
+    val OnWarningContainerDark = Color(0xFF000000) // Black (7.77:1)
 
     val InfoDark = Color(0xFF64B5F6)               // Light blue
     val OnInfoDark = Color(0xFF000000)             // Black
